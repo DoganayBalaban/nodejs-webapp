@@ -1,0 +1,6 @@
+body {
+  padding-top: 56px; /* Navbar yüksekliği kadar padding ekle */
+}
+.bdark {
+  background-color: #343a40;
+}
