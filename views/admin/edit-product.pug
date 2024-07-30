@@ -4,23 +4,25 @@ block styles
   link(rel="stylesheet", href="/css/form.css")
 
 block content 
-  form(action="/admin/edit-product" method="POST")
+  form(action="/admin/products" method="POST")
+
+    input#id(type="hidden" name="id" value=`${product.id}`)
     .form-group.row
       label.col-sm-2.col-form-label(for="name") Name
       .col-sm-10
-        input.form-control(type="text" name="name" id="name")
+        input.form-control(type="text" name="name" id="name" value=`${product.name}`)
     .form-group.row
-      label.col-sm-2.col-form-label(for="price") Fiyat
+      label.col-sm-2.col-form-label(for="price") Price
       .col-sm-10
-        input.form-control(type="text" name="price" id="price")
+        input.form-control(type="text" name="price" id="price" value=`${product.price}`)
     .form-group.row
       label.col-sm-2.col-form-label(for="image") Resim
       .col-sm-10
-        input.form-control(type="text" name="image" id="image")
+        input.form-control(type="text" name="image" id="image" value=`${product.image}`)
     .form-group.row
       label.col-sm-2.col-form-label(for="desc") Açıklama
       .col-sm-10
-        input.form-control(type="text" name="desc" id="desc")
+        textarea.form-control(cols="30" rows="10" name="desc" id="desc") #{product.description}
     .form-group.row
       .col-sm-10.offset-sm-2
          input.btn.btn-primary(type="submit" value="save")

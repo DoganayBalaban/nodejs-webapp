@@ -1,0 +1,12 @@
+extends ../layouts/main-layout.pug
+
+block content
+  .container
+      .row.mt-5
+        .col-md-6
+          img(src=`${product.image}`, alt='Ürün Resmi', class='img-fluid')
+        .col-md-6
+          h1 #{product.name}
+          p #{product.description}
+          h3 #{product.price} TL
+          button.btn.btn-primary Sepete Ekle
