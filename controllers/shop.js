@@ -1,39 +1,61 @@
 const Product = require("../models/product");
+const Category = require("../models/category");
 
 exports.getIndex = (req, res, next) => {
-  const products = Product.getAllProducts();
-  res.render("shop/index", {
-    title: "Shopping",
-    products: products,
-    path: "/",
-  });
+  const categories = Category.getAllCategories();
+  Product.getAllProducts()
+    .then((products) => {
+      res.render("shop/index", {
+        title: "Shopping",
+        products: products[0],
+        categories: categories,
+        path: "/",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.getProducts = (req, res, next) => {
-  const products = Product.getAllProducts();
+  const categories = Category.getAllCategories();
+  Product.getAllProducts()
+    .then((products) => {
+      res.render("shop/products", {
+        title: "Products",
+        products: products[0],
+        categories: categories,
+        path: "/products",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+exports.getProductsByCategoryId = (req, res, next) => {
+  const categoryId = req.params.categoryid;
+  const products = Product.getProductsByCategoryId(categoryId);
+  const categories = Category.getAllCategories();
   res.render("shop/products", {
     title: "Products",
     products: products,
+    categories: categories,
     path: "/products",
+    selectedCategory: categoryId,
   });
 };
 
 exports.getProduct = (req, res, next) => {
-  const productid = req.params.productid;
-  const product = Product.getById(productid);
-  res.render("shop/product-detail", {
-    title: product.name,
-    product: product,
-    path: "/products",
-  });
-};
-
-exports.getProductDetails = (req, res, next) => {
-  const products = Product.getAllProducts();
-  res.render("shop/details", {
-    title: "Details",
-    path: "/details",
-  });
+  Product.getById(req.params.productid)
+    .then((product) =>
+      res.render("shop/product-detail", {
+        title: product[0][0].name,
+        product: product[0][0],
+        path: "/products",
+      })
+    )
+    .catch((err) => console.log("err", err));
 };
 
 exports.getCart = (req, res, next) => {

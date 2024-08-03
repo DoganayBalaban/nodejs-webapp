@@ -1,12 +1,17 @@
 extends ../layouts/main-layout.pug
 
 block content
-  .container
-      .row.mt-5
-        .col-md-6
-          img(src=`${product.image}`, alt='Ürün Resmi', class='img-fluid')
-        .col-md-6
-          h1 #{product.name}
-          p #{product.description}
-          h3 #{product.price} TL
-          button.btn.btn-primary Sepete Ekle
+  .row 
+    .col-md-3
+      img(src=`${product.imageUrl}`, alt='Ürün Resmi', class='img-fluid')
+    .col-md-9.pl-3
+      h1.mb-3 #{product.name}
+      hr
+      a(href="").btn.btn-link.p-0.mb-3 Telefon 
+      .mb-3 
+        h4.text-primary.mb-3 #{product.price} TL
+        button.btn.btn-primary Sepete Ekle
+  .row
+    .col-md-12 
+      hr
+      p.p-3 #{product.description}

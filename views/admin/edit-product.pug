@@ -18,11 +18,18 @@ block content
     .form-group.row
       label.col-sm-2.col-form-label(for="image") Resim
       .col-sm-10
-        input.form-control(type="text" name="image" id="image" value=`${product.image}`)
+        input.form-control(type="text" name="imageUrl" id="imageUrl" value=`${product.imageurl}`)
     .form-group.row
-      label.col-sm-2.col-form-label(for="desc") Açıklama
+      label.col-sm-2.col-form-label(for="categoryid") Category
       .col-sm-10
-        textarea.form-control(cols="30" rows="10" name="desc" id="desc") #{product.description}
+        select.form-control( name="cateoryid" id="categoryid")
+          option(value="-1") Select Category 
+          each category in categories
+            option(value=`${category.id}` selected=category.id===product.categoryid) #{category.name}
+    .form-group.row
+      label.col-sm-2.col-form-label(for="description") Açıklama
+      .col-sm-10
+        textarea.form-control(cols="30" rows="10" name="description" id="description") #{product.description}
     .form-group.row
       .col-sm-10.offset-sm-2
          input.btn.btn-primary(type="submit" value="save")

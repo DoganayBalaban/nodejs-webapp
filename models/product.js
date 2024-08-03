@@ -1,49 +1,44 @@
-const products = [
-  {
-    id: "1",
-    name: "samsung",
-    price: 2000,
-    image: "https://place-hold.it/300x500",
-    description: "iyi telefon",
-  },
-  {
-    id: "2",
-    name: "Iphone",
-    price: 2000,
-    image: "https://place-hold.it/300x500",
-    description: "iyi telefon",
-  },
-  {
-    id: "3",
-    name: "LG",
-    price: 2000,
-    image: "https://place-hold.it/300x500",
-    description: "iyi telefon",
-  },
-];
+const connection = require("../utility/db");
+
 module.exports = class Product {
-  constructor(name, price, description, image) {
-    this.id = (Math.floor(Math.random() * 99999) + 1).toString();
+  constructor(name, price, description, imageUrl, categoryid) {
     this.name = name;
     this.price = price;
     this.description = description;
-    this.image = image;
+    this.imageUrl = imageUrl;
+    this.categoryid = categoryid;
   }
   saveProduct() {
-    products.push(this);
+    return connection.execute(
+      "INSERT INTO products (name, price, description, imageUrl, categoryid) VALUES (?, ?, ?, ?,?)",
+      [this.name, this.price, this.description, this.imageUrl, this.categoryid]
+    );
   }
   static updateProduct(product) {
-    const index = products.findIndex((i) => i.id === product.id);
-
-    products[index].name = product.name;
-    products[index].price = product.price;
-    products[index].description = product.description;
-    products[index].image = product.image;
+    return connection.execute(
+      "UPDATE products SET products.name=?, products.price=?, products.description=?, products.imageUrl=?, products.categoryid=? WHERE products.id = ?",
+      [
+        product.name,
+        product.price,
+        product.description,
+        product.imageUrl,
+        product.categoryid,
+        product.id,
+      ]
+    );
   }
   static getAllProducts() {
-    return products;
+    return connection.execute("select * from products");
   }
   static getById(id) {
-    return products.find((product) => product.id == id);
+    return connection.execute("select * from products where id = ?", [id]);
+  }
+  static deleteById(id) {
+    return connection.execute("delete from products where id = ?", [id]);
+  }
+  static getProductsByCategoryId(id) {
+    return connection.execute("select * from products where categoryid = ?", [
+      id,
+    ]);
   }
 };

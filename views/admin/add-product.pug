@@ -14,13 +14,21 @@ block content
       .col-sm-10
         input.form-control(type="text" name="price" id="price")
     .form-group.row
-      label.col-sm-2.col-form-label(for="image") Resim
+        label.col-sm-2.col-form-label(for="image") Resim
+        .col-sm-10
+         input.form-control(type="text" name="image" id="image" )
+    .form-group.row
+      label.col-sm-2.col-form-label(for="categoryid") Category
       .col-sm-10
-        input.form-control(type="text" name="image" id="image")
+        select.form-control( name="cateoryid" id="categoryid")
+          option(value="-1") Select Category 
+          each category in categories
+            option(value=`${category.id}`) #{category.name}
+
     .form-group.row
       label.col-sm-2.col-form-label(for="desc") Açıklama
       .col-sm-10
-        input.form-control(type="text" name="desc" id="desc")
+        textarea.form-control(cols="30" rows="10" name="desc" id="desc")
     .form-group.row
       .col-sm-10.offset-sm-2
          input.btn.btn-primary(type="submit" value="save")
