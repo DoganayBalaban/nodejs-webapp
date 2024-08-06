@@ -1,32 +1,21 @@
-const connection = require("../utility/db");
+const sequelize = require("../utility/db");
+const { DataTypes } = require("sequelize");
 
-module.exports = class Category {
-  constructor(name) {
-    this.id = (categories.length + 1).toString;
-    this.name = name;
-    this.description = description;
-  }
-  saveCategory() {
-    return (
-      (connection.execute =
-        "INSERT INTO categories (name, description) VALUES (?, ?)"),
-      [this.name, this.description]
-    );
-  }
-  static updateCategory(category) {
-    return (
-      (connection.execute =
-        "UPDATE categories SET categories.name = ?, categories.description = ? WHERE categories.id = ?"),
-      [category.name, category.description, category.id]
-    );
-  }
-  static getAllCategories() {
-    return connection.execute("SELECT * FROM categories");
-  }
-  static getById(id) {
-    return connection.execute("SELECT * FROM categories WHERE id = ?", [id]);
-  }
-  static deleteById(id) {
-    return connection.execute("DELETE FROM categories WHERE id = ?", [id]);
-  }
-};
+const Category = sequelize.define("categories", {
+  id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+});
+
+module.exports = Category;

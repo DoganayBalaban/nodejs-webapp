@@ -2,15 +2,22 @@ const Product = require("../models/product");
 const Category = require("../models/category");
 
 exports.getIndex = (req, res, next) => {
-  const categories = Category.getAllCategories();
-  Product.getAllProducts()
+  Product.findAll({
+    attributes: ["id", "name", "price", "imageUrl"],
+  })
     .then((products) => {
-      res.render("shop/index", {
-        title: "Shopping",
-        products: products[0],
-        categories: categories,
-        path: "/",
-      });
+      Category.findAll()
+        .then((categories) =>
+          res.render("shop/index", {
+            title: "Shopping",
+            products: products,
+            categories: categories,
+            path: "/",
+          })
+        )
+        .catch((err) => {
+          console.log("err :>> ", err);
+        });
     })
     .catch((err) => {
       console.log(err);
@@ -18,15 +25,22 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  const categories = Category.getAllCategories();
-  Product.getAllProducts()
+  Product.findAll({
+    attributes: ["id", "name", "price", "imageUrl", "description"],
+  })
     .then((products) => {
-      res.render("shop/products", {
-        title: "Products",
-        products: products[0],
-        categories: categories,
-        path: "/products",
-      });
+      Category.findAll()
+        .then((categories) =>
+          res.render("shop/products", {
+            title: "Products",
+            products: products,
+            categories: categories,
+            path: "/products",
+          })
+        )
+        .catch((err) => {
+          console.log("err :>> ", err);
+        });
     })
     .catch((err) => {
       console.log(err);
@@ -47,11 +61,11 @@ exports.getProductsByCategoryId = (req, res, next) => {
 };
 
 exports.getProduct = (req, res, next) => {
-  Product.getById(req.params.productid)
+  Product.findByPk(req.params.productid)
     .then((product) =>
       res.render("shop/product-detail", {
-        title: product[0][0].name,
-        product: product[0][0],
+        title: product.name,
+        product: product,
         path: "/products",
       })
     )

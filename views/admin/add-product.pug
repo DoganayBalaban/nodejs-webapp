@@ -17,13 +17,13 @@ block content
         label.col-sm-2.col-form-label(for="image") Resim
         .col-sm-10
          input.form-control(type="text" name="image" id="image" )
-    .form-group.row
-      label.col-sm-2.col-form-label(for="categoryid") Category
-      .col-sm-10
-        select.form-control( name="cateoryid" id="categoryid")
-          option(value="-1") Select Category 
-          each category in categories
-            option(value=`${category.id}`) #{category.name}
+    //- .form-group.row
+    //-   label.col-sm-2.col-form-label(for="categoryid") Category
+    //-   .col-sm-10
+    //-     select.form-control( name="cateoryid" id="categoryid")
+    //-       option(value="-1") Select Category 
+    //-       each category in categories
+    //-         option(value=`${category.id}`) #{category.name}
 
     .form-group.row
       label.col-sm-2.col-form-label(for="desc") Açıklama

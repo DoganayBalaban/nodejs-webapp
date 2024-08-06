@@ -16,6 +16,22 @@ const userRoutes = require("./routes/shop");
 const errorController = require("./controllers/errors");
 const sequelize = require("./utility/db");
 
+const Category = require("./models/category");
+const Product = require("./models/product");
+
+//bire çok ilişki kurulur
+Product.belongsTo(Category);
+Category.hasMany(Product);
+//db sync
+sequelize
+  .sync({ force: true })
+  .then((result) => {
+    console.log("result :>> ", result);
+  })
+  .catch((err) => {
+    console.log("err :>> ", err);
+  });
+
 // req.body içeriğini okuma
 app.use(bp.urlencoded({ extended: false }));
 // statik dosyaları kullanıma açma
@@ -25,22 +41,13 @@ app.use(express.static(path.join(__dirname, "./public")));
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
 app.use(errorController.get404Page);
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("Veritabanı Bağlantısı Başarılı");
-  })
-  .catch((err) => {
-    console.log("err :>> ", err);
-  });
-
-// connection
-//   .execute("select * from products")
-//   .then((result) => {
-//     console.log(result[0]);
+// sequelize
+//   .authenticate()
+//   .then(() => {
+//     console.log("Veritabanı Bağlantısı Başarılı");
 //   })
 //   .catch((err) => {
-//     console.log(err);
+//     console.log("err :>> ", err);
 //   });
 
 app.listen(port, () => {
