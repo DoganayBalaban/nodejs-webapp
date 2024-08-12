@@ -7,6 +7,7 @@ const adminRoutes = require("./routes/admin");
 const userRoutes = require("./routes/shop");
 const errorController = require("./controllers/errors");
 const User = require("./models/user");
+require("dotenv").config();
 
 const app = express();
 
@@ -38,10 +39,10 @@ app.use(errorController.get404Page);
 
 // Veritabanına bağlanma ve sunucu başlatma
 mongoose
-  .connect(
-    "mongodb+srv://dbalaban1907:MwMHX0SS4SVeqmOf@cluster0.rabq3.mongodb.net/node-app?retryWrites=true&w=majority&appName=Cluster0",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(async () => {
     console.log("Veritabanına başarıyla bağlanıldı.");
 
