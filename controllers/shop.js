@@ -31,28 +31,6 @@ exports.getProducts = async (req, res, next) => {
   }
 };
 
-// exports.getProductsByCategoryId = (req, res, next) => {
-//   const categoryid = req.params.categoryid;
-//   const model = [];
-//   Category.findAll()
-//     .then((categories) => {
-//       model.categories = categories;
-//       const category = categories.find((i) => i.id == categoryid);
-//       category.getProducts();
-//     })
-//     .then((products) => {
-//       res.render("shop/products", {
-//         title: "Products",
-//         products: products || [],
-//         categories: model.categories,
-//         path: "/products",
-//         selectedCategory: categoryid,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log("err :>> ", err);
-//     });
-// };
 exports.getProductsByCategoryId = async (req, res, next) => {
   try {
     const categoryId = req.params.categoryid;
