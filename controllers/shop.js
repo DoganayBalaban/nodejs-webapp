@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const Category = require("../models/category");
+const Order = require("../models/order");
 
 exports.getIndex = async (req, res, next) => {
   try {
@@ -34,25 +35,27 @@ exports.getProducts = async (req, res, next) => {
 exports.getProductsByCategoryId = async (req, res, next) => {
   try {
     const categoryId = req.params.categoryid;
+    const model = {};
 
-    // Tüm kategorileri alın
-    const categories = await Category.findAll();
-    const category = categories.find((i) => i.id == categoryId);
+    // Kategorileri bulma
+    model.categories = await Category.find();
 
-    // Seçilen kategoriye ait ürünleri alın
-    const products = await category.getProducts();
+    // Ürünleri bulma
+    const products = await Product.find({
+      categories: categoryId,
+    });
 
-    // Verileri render etmek için gönderin
+    // Sonucu render etme
     res.render("shop/products", {
       title: "Products",
       products: products,
-      categories: categories,
+      categories: model.categories,
       path: "/products",
       selectedCategory: categoryId,
     });
-  } catch (err) {
-    console.log("Error :>> ", err);
-    next(err); // Hata durumunu sonraki middleware'e ilet
+  } catch (error) {
+    console.error("error :>> ", error);
+    next(error); // Hatanın bir üst katmana iletilmesi
   }
 };
 
@@ -69,115 +72,87 @@ exports.getProduct = async (req, res, next) => {
   }
 };
 
-exports.getCart = (req, res, next) => {
-  const action = req.query.action;
+exports.getCart = async (req, res, next) => {
   req.user
     .getCart()
-    .then((cart) => {
-      return cart
-        .getProducts()
-        .then((products) => {
-          res.render("shop/cart", {
-            title: "Cart",
-            path: "/cart",
-            products: products,
-            action,
-          });
-        })
-        .catch((err) => {
-          console.log("err :>> ", err);
-        });
+    .then((products) => {
+      res.render("shop/cart", {
+        title: "Cart",
+        path: "/cart",
+        products,
+      });
     })
     .catch((err) => {
       console.log("err :>> ", err);
     });
 };
-exports.postCart = (req, res, next) => {
-  const productId = req.body.productId;
-  let quantity = 1;
-  let userCart;
-
-  req.user
-    .getCart()
-    .then((cart) => {
-      userCart = cart;
-      return cart.getProducts({ where: { id: productId } });
-    })
-    .then((products) => {
-      let product;
-      if (products.length > 0) {
-        product = products[0];
-      }
-      if (product) {
-        quantity += product.cartItem.quantity;
-        return product;
-      }
-      return Product.findByPk(productId);
-    })
-    .then((product) => {
-      userCart.addProduct(product, { through: { quantity: quantity } });
-    })
-    .then(() => {
-      res.redirect("/cart?action=add");
-    })
-    .catch((err) => {
-      console.log("err :>> ", err);
-    });
+exports.postCart = async (req, res, next) => {
+  try {
+    const productId = req.body.productId;
+    const product = await Product.findById(productId);
+    await req.user.addToCart(product);
+    res.redirect("/cart?action=add");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 };
-exports.deleteCartItem = (req, res, next) => {
-  const productId = req.body.id;
-  req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts({ where: { id: productId } });
-    })
-    .then((products) => {
-      const product = products[0];
-      return product.cartItem.destroy();
-    })
-    .then(() => {
-      res.redirect("/cart?action=delete");
-    });
+exports.deleteCartItem = async (req, res, next) => {
+  try {
+    const productId = req.body.id;
+    await req.user.deleteCartItem(productId);
+    res.redirect("/cart?action=delete");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 };
 
-exports.getOrders = (req, res, next) => {
-  req.user.getOrders({ include: ["products"] }).then((orders) => {
+exports.getOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find({ "user.userId": req.user._id });
     res.render("shop/orders", {
-      title: "Orders",
       path: "/orders",
       orders,
+      title: "Orders",
     });
-  });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 };
-exports.postOrders = (req, res, next) => {
-  let userCart;
-  req.user
-    .getCart()
-    .then((cart) => {
-      userCart = cart;
-      return cart.getProducts();
-    })
-    .then((products) => {
-      return req.user
-        .createOrder()
-        .then((order) => {
-          order.addProducts(
-            products.map((product) => {
-              product.orderItem = {
-                quantity: product.cartItem.quantity,
-                price: product.price,
-              };
-              return product;
-            })
-          );
-        })
-        .catch((err) => console.log("err :>> ", err));
-    })
-    .then(() => {
-      userCart.setProducts(null);
-    })
-    .then(() => {
-      res.redirect("/orders");
-    })
-    .catch((err) => console.log("err :>> ", err));
+exports.postOrders = async (req, res, next) => {
+  try {
+    // Kullanıcı sepetindeki ürünleri yükle
+    await req.user.populate("cart.items.productId");
+    // Sipariş nesnesi oluştur
+    const order = new Order({
+      user: {
+        userId: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+      },
+      items: req.user.cart.items.map((p) => ({
+        product: {
+          _id: p.productId._id,
+          name: p.productId.name,
+          price: p.productId.price,
+          imageUrl: p.productId.imageUrl,
+        },
+        quantity: p.quantity,
+      })),
+    });
+
+    // Siparişi kaydet
+    await order.save();
+
+    // Kullanıcının sepetini temizle
+    await req.user.clearCart();
+
+    // Sipariş sayfasına yönlendir
+    res.redirect("/orders");
+  } catch (err) {
+    console.error(err);
+    next(err); // Hatanın üst katmanlara iletilmesi için
+  }
 };
