@@ -1,3 +1,48 @@
 extends ../layouts/main-layout.pug
 
 block content 
+    if (typeof action !== 'undefined' && action === 'add')
+        div.alert.alert-success Ürün eklendi
+    
+    if (typeof action !== 'undefined' && action === 'delete')
+        div.alert.alert-danger Ürün silindi
+    
+    
+    if products.length > 0
+        table.table.table-bordered 
+            thead 
+                tr 
+                    th(style="width:100px") Image 
+                    th Product Name 
+                    th(style="width:150") Description
+                    th(style="width:133px") Price
+                    th Quantity
+                    th 
+
+            tbody
+                each product in products 
+                    tr 
+                        td 
+                            img(src=`${product.imageUrl}` width='80')
+                        td #{product.name}
+                        td #{product.description}
+                        td #{product.price} TL 
+                        td #{product.cartItem.quantity}
+                        td 
+                            form(action="/delete-cartitem" method="post")
+                                input(type="hidden" name="id" value=`${product.id}`)
+                                button(type='submit').btn.btn-danger.btn-sm Delete
+            tfoot 
+                td(colspan='4')
+                    - var total = 0
+                    each product in products 
+                        - total += (product.price * product.cartItem.quantity)
+                    
+
+                td #{total} TL
+        .text-center 
+            a(href="/").btn.btn-primary Alışverişe Devam Et 
+            form(action="/create-order", method="post")
+                button(type="submit").btn.btn-primary.ms-2 Alışverişi tamamla
+    else    
+        h1 No Products                    

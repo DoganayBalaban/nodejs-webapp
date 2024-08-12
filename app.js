@@ -1,55 +1,65 @@
 const express = require("express");
-const app = express();
-
 const path = require("path");
-const bp = require("body-parser");
-
-//pug kurulumu
-app.set("view engine", "pug");
-app.set("views", "./views");
-// const connection = require("./utility/db");
-
-const port = 3000;
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 const adminRoutes = require("./routes/admin");
 const userRoutes = require("./routes/shop");
 const errorController = require("./controllers/errors");
-const sequelize = require("./utility/db");
+const User = require("./models/user");
 
-const Category = require("./models/category");
-const Product = require("./models/product");
+const app = express();
 
-//bire çok ilişki kurulur
-Product.belongsTo(Category);
-Category.hasMany(Product);
-//db sync
-sequelize
-  .sync({ force: true })
-  .then((result) => {
-    console.log("result :>> ", result);
-  })
-  .catch((err) => {
-    console.log("err :>> ", err);
-  });
+// Pug ayarları
+app.set("view engine", "pug");
+app.set("views", "./views");
 
-// req.body içeriğini okuma
-app.use(bp.urlencoded({ extended: false }));
-// statik dosyaları kullanıma açma
+// Middleware ayarları
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "./public")));
 
-//routes
+// Kullanıcıyı middleware üzerinden ekle
+app.use(async (req, res, next) => {
+  try {
+    const user = await User.findOne({ name: "doganay" });
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error("Kullanıcıyı bulurken hata oluştu:", err);
+  }
+});
+
+// Rotalar
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
-app.use(errorController.get404Page);
-// sequelize
-//   .authenticate()
-//   .then(() => {
-//     console.log("Veritabanı Bağlantısı Başarılı");
-//   })
-//   .catch((err) => {
-//     console.log("err :>> ", err);
-//   });
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-});
+// 404 sayfası
+app.use(errorController.get404Page);
+
+// Veritabanına bağlanma ve sunucu başlatma
+mongoose
+  .connect(
+    "mongodb+srv://dbalaban1907:MwMHX0SS4SVeqmOf@cluster0.rabq3.mongodb.net/node-app?retryWrites=true&w=majority&appName=Cluster0",
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(async () => {
+    console.log("Veritabanına başarıyla bağlanıldı.");
+
+    let user = await User.findOne({ name: "doganay" });
+    if (!user) {
+      user = new User({
+        name: "doganay",
+        email: "doganay@gmail.com",
+        cart: { items: [] },
+      });
+      await user.save();
+    }
+    console.log("Kullanıcı bilgisi:", user);
+
+    app.listen(3000, () => {
+      console.log("Sunucu 3000 portunda çalışıyor.");
+    });
+  })
+  .catch((err) => {
+    console.error("Veritabanına bağlanırken hata oluştu:", err);
+  });

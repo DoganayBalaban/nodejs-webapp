@@ -1,0 +1,20 @@
+extends ../layouts/main-layout.pug
+
+block styles 
+  link(rel="stylesheet", href="/css/form.css")
+
+block content 
+  form(action="/admin/categories" method="POST")
+
+    input#id(type="hidden" name="id" value=`${category._id}`)
+    .form-group.row
+      label.col-sm-2.col-form-label(for="name") Name
+      .col-sm-10
+        input.form-control(type="text" name="name" id="name" value=`${category.name}`)
+    .form-group.row
+      label.col-sm-2.col-form-label(for="description") Açıklama
+      .col-sm-10
+        textarea.form-control(cols="30" rows="10" name="description" id="description") #{category.description}
+    .form-group.row
+      .col-sm-10.offset-sm-2
+         input.btn.btn-primary(type="submit" value="save")

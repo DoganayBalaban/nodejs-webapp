@@ -1,21 +1,12 @@
-const sequelize = require("../utility/db");
-const { DataTypes } = require("sequelize");
-
-const Category = sequelize.define("categories", {
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true,
-  },
+const mongoose = require("mongoose");
+const categorySchema = mongoose.Schema({
   name: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: String,
+    required: true,
   },
   description: {
-    type: DataTypes.STRING,
-    allowNull: true,
+    type: String,
+    required: false,
   },
 });
-
-module.exports = Category;
+module.exports = mongoose.model("Category", categorySchema);

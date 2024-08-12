@@ -15,6 +15,7 @@ block content
                     th(style="width:100px") Image 
                     th Product Name 
                     th(style="width:150") Description
+                    th(style="width:133px") User Name
                     th(style="width:133px") Price
                     th 
 
@@ -26,6 +27,7 @@ block content
                         td #{product.name}
                         td #{product.description}
                         td #{product.price} TL 
+                        td #{product.userId.name}  
                         td 
                             a.btn.btn-primary.btn-sm.mr-2(href=`/admin/products/${product.id}`) Edit 
                             form(action="/admin/delete-product" method="post")
