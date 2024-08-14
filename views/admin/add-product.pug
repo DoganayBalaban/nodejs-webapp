@@ -5,6 +5,7 @@ block styles
 
 block content 
   form(action="/admin/add-product" method="POST")
+    input(type="hidden" name='_csrf' value=`${csrfToken}`)
     .form-group.row
       label.col-sm-2.col-form-label(for="name") Name
       .col-sm-10

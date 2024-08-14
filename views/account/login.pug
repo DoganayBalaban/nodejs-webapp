@@ -4,15 +4,22 @@ block styles
   link(rel="stylesheet", href="/css/form.css")
 
 block content 
+  if errorMessage 
+    div.alert.alert-danger.col-sm-7 #{errorMessage}
   form(action="/login" method="POST")
+    input(type="hidden" name='_csrf' value=`${csrfToken}`)
     .form-group.row
       label.col-sm-2.col-form-label(for="email") Email
-      .col-sm-10
+      .col-sm-10.pe-0
         input.form-control(type="email" name="email")
     .form-group.row
       label.col-sm-2.col-form-label(for="password") Password
-      .col-sm-10
+      .col-sm-10.pe-0
         input.form-control(type="password" name="password")
     .form-group.row
-      .col-sm-10.offset-sm-2
+      .col-sm-10.offset-sm-2.pe-0
          input.btn.btn-primary(type="submit" value="Submit")
+    .form-group.row
+        .col-sm-10.offset-sm-2
+          a(href="/reset-password").btn.btn-link.p-0 Reset Password
+

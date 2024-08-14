@@ -15,7 +15,7 @@ nav.navbar.navbar-expand-lg.navbar-dark.bdark.fixed-top
             a(href="/cart" class=(path === '/cart' ? 'nav-link active' : 'nav-link')) Cart
           li.nav-item
             a(href="/orders" class=(path === '/orders' ? 'nav-link active' : 'nav-link')) Orders
-
+        if isAdmin
           li.nav-item
             a(href="/admin/add-product" class=(path === '/admin/add-product' ? 'nav-link active' : 'nav-link')) Add Product
           li.nav-item
@@ -27,7 +27,7 @@ nav.navbar.navbar-expand-lg.navbar-dark.bdark.fixed-top
       ul.navbar-nav.ms-auto
         if isAuthenticated
           li.nav-item
-            a.nav-link(href="#") Logout
+            a.nav-link(href="/logout") Logout
         else 
           li.nav-item
             a.nav-link(href="/login") Login

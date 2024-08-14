@@ -4,7 +4,10 @@ block styles
   link(rel="stylesheet", href="/css/form.css")
 
 block content 
+  if errorMessage 
+    .alert.alert-danger.col-sm-7 #{errorMessage}
   form(action="/register" method="POST")
+    input(type="hidden" name='_csrf' value=`${csrfToken}`)
     .form-group.row
       label.col-sm-2.col-form-label(for="name") Name
       .col-sm-10

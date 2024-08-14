@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const mongoDbStore = require("connect-mongodb-session")(session);
+const csurf = require("csurf");
 
 const adminRoutes = require("./routes/admin");
 const userRoutes = require("./routes/shop");
@@ -38,6 +39,7 @@ app.use(
     store: store,
   })
 );
+app.use(csurf());
 
 // Kullanıcıyı middleware üzerinden ekle
 app.use(async (req, res, next) => {
