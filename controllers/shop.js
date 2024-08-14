@@ -11,6 +11,7 @@ exports.getIndex = async (req, res, next) => {
       products: products,
       categories: categories,
       path: "/",
+      isAuthenticated: req.session.isAuthenticated,
     });
   } catch (error) {
     console.log("error :>> ", error);
@@ -26,6 +27,7 @@ exports.getProducts = async (req, res, next) => {
       products,
       categories,
       path: "/",
+      isAuthenticated: req.session.isAuthenticated,
     });
   } catch (error) {
     console.log("error :>> ", error);
@@ -52,6 +54,7 @@ exports.getProductsByCategoryId = async (req, res, next) => {
       categories: model.categories,
       path: "/products",
       selectedCategory: categoryId,
+      isAuthenticated: req.session.isAuthenticated,
     });
   } catch (error) {
     console.error("error :>> ", error);
@@ -66,6 +69,7 @@ exports.getProduct = async (req, res, next) => {
       title: product.name,
       product,
       path: "/products",
+      isAuthenticated: req.session.isAuthenticated,
     });
   } catch (error) {
     console.log("error :>> ", error);
@@ -80,6 +84,7 @@ exports.getCart = async (req, res, next) => {
         title: "Cart",
         path: "/cart",
         products,
+        isAuthenticated: req.session.isAuthenticated,
       });
     })
     .catch((err) => {
@@ -115,6 +120,7 @@ exports.getOrders = async (req, res, next) => {
       path: "/orders",
       orders,
       title: "Orders",
+      isAuthenticated: req.session.isAuthenticated,
     });
   } catch (error) {
     console.error(error);

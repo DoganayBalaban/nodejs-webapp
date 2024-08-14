@@ -2,9 +2,13 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const mongoDbStore = require("connect-mongodb-session")(session);
 
 const adminRoutes = require("./routes/admin");
 const userRoutes = require("./routes/shop");
+const accountRoutes = require("./routes/account");
 const errorController = require("./controllers/errors");
 const User = require("./models/user");
 require("dotenv").config();
@@ -18,11 +22,30 @@ app.set("views", "./views");
 // Middleware ayarları
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "./public")));
+app.use(cookieParser());
+var store = new mongoDbStore({
+  uri: process.env.MONGODB_URI,
+  collection: "sessions",
+});
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 1 gün
+    },
+    store: store,
+  })
+);
 
 // Kullanıcıyı middleware üzerinden ekle
 app.use(async (req, res, next) => {
   try {
-    const user = await User.findOne({ name: "doganay" });
+    if (!req.session.user) {
+      return next();
+    }
+    const user = await User.findById(req.session.user._id);
     req.user = user;
     next();
   } catch (err) {
@@ -33,6 +56,7 @@ app.use(async (req, res, next) => {
 // Rotalar
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
+app.use(accountRoutes);
 
 // 404 sayfası
 app.use(errorController.get404Page);
@@ -45,18 +69,6 @@ mongoose
   })
   .then(async () => {
     console.log("Veritabanına başarıyla bağlanıldı.");
-
-    let user = await User.findOne({ name: "doganay" });
-    if (!user) {
-      user = new User({
-        name: "doganay",
-        email: "doganay@gmail.com",
-        cart: { items: [] },
-      });
-      await user.save();
-    }
-    console.log("Kullanıcı bilgisi:", user);
-
     app.listen(3000, () => {
       console.log("Sunucu 3000 portunda çalışıyor.");
     });
