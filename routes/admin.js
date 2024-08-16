@@ -7,8 +7,8 @@ const adminController = require("../controllers/admin");
 
 // Ürün rotaları
 router.get("/products", isAuth, adminController.getAllProducts);
-router.get("/add-product", csrf, isAdmin, adminController.getAddProduct);
-router.post("/add-product", isAuth, isAdmin, adminController.postAddProduct);
+router.get("/add-product", csrf, adminController.getAddProduct);
+router.post("/add-product", isAuth, adminController.postAddProduct);
 router.get(
   "/products/:productid",
   csrf,

@@ -31,19 +31,36 @@ exports.postAddProduct = async (req, res, next) => {
     const name = req.body.name;
     const price = req.body.price;
     const description = req.body.description;
-    const imageUrl = req.body.imageUrl;
+    const file = req.body.file;
 
     const product = new Product({
       name,
       price,
-      imageUrl,
+      imageUrl: file.filename,
       description,
       userId: req.user,
+      isActive: true,
     });
     await product.save();
     res.redirect("/admin/products");
   } catch (error) {
-    console.log("error :>> ", error);
+    let message = "";
+    if (error.name == "ValidationError") {
+      for (field in error.errors) {
+        message += error.errors[field].message + `<br>`;
+      }
+    }
+    res.render("admin/add-product", {
+      title: "New Product",
+      path: "/admin/add-product",
+      errorMessage: message,
+      inputs: {
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description,
+        imageUrl: req.body.imageUrl,
+      },
+    });
   }
 };
 

@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const mongoDbStore = require("connect-mongodb-session")(session);
 const csurf = require("csurf");
+const multer = require("multer");
 
 const adminRoutes = require("./routes/admin");
 const userRoutes = require("./routes/shop");
@@ -20,8 +21,20 @@ const app = express();
 app.set("view engine", "pug");
 app.set("views", "./views");
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./public/img/");
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
 // Middleware ayarları
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: storage }).single("image"));
 app.use(express.static(path.join(__dirname, "./public")));
 app.use(cookieParser());
 var store = new mongoDbStore({

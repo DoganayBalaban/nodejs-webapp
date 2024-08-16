@@ -4,12 +4,14 @@ block styles
   link(rel="stylesheet", href="/css/form.css")
 
 block content 
-  form(action="/admin/add-product" method="POST")
+  if errorMessage 
+    .alert.alert-danger.col-sm-7 !{errorMessage}
+  form(action="/admin/add-product" method="POST" enctype="multipart/form-data")
     input(type="hidden" name='_csrf' value=`${csrfToken}`)
     .form-group.row
       label.col-sm-2.col-form-label(for="name") Name
       .col-sm-10
-        input.form-control(type="text" name="name" id="name")
+        input.form-control(type="text" name="name" id="name" )
     .form-group.row
       label.col-sm-2.col-form-label(for="price") Fiyat
       .col-sm-10
@@ -17,7 +19,7 @@ block content
     .form-group.row
       label.col-sm-2.col-form-label(for="imageUrl") Resim
       .col-sm-10
-        input.form-control(type="text" name="imageUrl" id="imageUrl" )
+        input.form-control-file(type="file" name="image" id="imageUrl" )
     //- .form-group.row
     //-   label.col-sm-2.col-form-label(for="categoryId") Category
     //-   .col-sm-10
@@ -28,7 +30,7 @@ block content
     .form-group.row
       label.col-sm-2.col-form-label(for="description") Açıklama
       .col-sm-10
-        textarea.form-control(cols="30" rows="10" name="description" id="description")
+        textarea.form-control(cols="30" rows="10" name="description" id="description" )
     .form-group.row
       .col-sm-10.offset-sm-2
          input.btn.btn-primary(type="submit" value="save")
