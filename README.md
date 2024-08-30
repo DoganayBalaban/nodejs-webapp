@@ -1,6 +1,3 @@
-#!/bin/bash
-
-# README.sh for nodejs-webapp
 
 # Project Overview
 # ----------------
@@ -30,16 +27,3 @@ npm start
 # - /controllers: Handles the business logic for each route.
 # - /models: Defines the data models and interacts with the database (if applicable).
 
-# Contributing
-# ------------
-# Contributions are welcome! Please fork the repository, create a new branch for your feature or fix,
-# and submit a pull request for review.
-
-# License
-# -------
-# This project is open-source. Please check the LICENSE file for more details.
-
-# Additional Resources
-# --------------------
-# For more detailed instructions and advanced usage, refer to the project documentation 
-# or related tutorials available online.
