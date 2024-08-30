@@ -1,4 +1,4 @@
-
+#!/bin/bash
 # Project Overview
 # ----------------
 # This is a simple Node.js web application built using the Express.js framework. 
